@@ -5,6 +5,8 @@
  */
 package com.ucentral.edu.vista;
 
+import com.ucentral.edu.core.ManejadorArchivos;
+
 /**
  *
  * @author ADMIN02F
@@ -15,7 +17,8 @@ public class ALex_Compiladores {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        ManejadorArchivos mn = new ManejadorArchivos();
+        mn.leerFichero();
     }
     
 }
