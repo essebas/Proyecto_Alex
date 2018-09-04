@@ -5,10 +5,17 @@
  */
 package com.ucentral.edu.vista;
 
+import com.ucentral.edu.core.FileController;
+import com.ucentral.edu.core.ViewController;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -16,16 +23,20 @@ import javax.swing.JFrame;
  */
 public class Vista extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Vista
-     */
+    Toolkit screen;
+    ViewController viewController;
+    FileController fileController;
+    private JFileChooser modalFileChooser;
+
     public Vista() {
+        viewController = new ViewController(this);        
+        screen = Toolkit.getDefaultToolkit();
         initComponents();
+        editComponents();
         createLayout();
     }
-    
-    public void createLayout(){       
-        Toolkit screen = Toolkit.getDefaultToolkit(); //Clase ToolKit para detectar las medidas del monitor donde se ejecuta el programa y ajustar la medida de la ventana.
+
+    public void createLayout() {
         Dimension screenSize = screen.getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
@@ -33,16 +44,47 @@ public class Vista extends javax.swing.JFrame {
         Double layoutHeight = new Double(screenHeight * 0.8);
         Double layoutWidthPosition = new Double((screenWidth - layoutWidth) / 2);
         Double layoutHeigthPosition = new Double((screenHeight - layoutHeight) / 2);
-
         setVisible(true);
-        setBounds(layoutWidthPosition.intValue(), layoutHeigthPosition.intValue(), layoutWidth.intValue(), layoutHeight.intValue());        
-        Image icono = screen.getImage("src\\com\\ucentral\\edu\\vista\\drawable\\icon.png");
+        setBounds(layoutWidthPosition.intValue(), layoutHeigthPosition.intValue(), layoutWidth.intValue(), layoutHeight.intValue());
+        //Image icono = screen.getImage("src" + File.separator + "com" + File.separator + "ucentral" + File.separator + "edu" + File.separator + "vista" + File.separator + "drawable" + File.separator + "icon.png");        
+        Image icono = screen.getImage(getClass().getClassLoader().getResource("icon.png"));
         setIconImage(icono);
         setTitle("Compilador Lexico");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
+    public void setIconBotton(JButton botton, String toolTip){
+        //System.out.println("Nombre botton" + botton.getName());
+        //Image img = screen.getImage("src" + File.separator + "com" + File.separator + "ucentral" + File.separator + "edu" + File.separator + "vista" + File.separator + "drawable" + File.separator + botton.getName() + ".png");
+        Image img = screen.getImage(getClass().getClassLoader().getResource(botton.getName() + ".png"));
+        Image newImg = img.getScaledInstance(30, 30, Image.SCALE_AREA_AVERAGING);
+        ImageIcon newIcon = new ImageIcon(newImg);
+        botton.setIcon(newIcon);
+        botton.setToolTipText(toolTip);
+    }
 
+    public void editComponents() {                
+        setIconBotton(btn_chargeFile, "Load file");
+        setIconBotton(btn_cleantxtBox, "Clean text area");        
+        modalFileChooser = new JFileChooser();
+        modalFileChooser.setCurrentDirectory(new File("c:" + File.separator + "temp"));
+        modalFileChooser.setFileFilter(new FileNameExtensionFilter("txt file", "txt"));
+    }
+        
+    
+    public void selectFileOption(){
+        int returnValue = 0;
+        returnValue = modalFileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = modalFileChooser.getSelectedFile();
+            fileController = new FileController(selectedFile);
+            txtAreaLoadFile.setText(fileController.readFile());                        
+        } else {
+            txtAreaLoadFile.setText("Select file...");
+        }
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,8 +95,21 @@ public class Vista extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel0 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        btn_chargeFile = new javax.swing.JButton();
+        btn_cleantxtBox = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        txtAreaLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtAreaLoadFile = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtAreaResultFile = new javax.swing.JTextArea();
+        txtAreaLabel2 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
         mainMenu = new javax.swing.JMenuBar();
         mOption1 = new javax.swing.JMenu();
+        mOption1_Load = new javax.swing.JMenuItem();
         mOption1_Exit = new javax.swing.JMenuItem();
         mOption2 = new javax.swing.JMenu();
 
@@ -62,18 +117,149 @@ public class Vista extends javax.swing.JFrame {
 
         jPanel0.setBackground(new java.awt.Color(255, 255, 255));
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2));
+
+        btn_chargeFile.setMaximumSize(new java.awt.Dimension(73, 40));
+        btn_chargeFile.setMinimumSize(new java.awt.Dimension(73, 40));
+        btn_chargeFile.setName("btn_chargeFile"); // NOI18N
+        btn_chargeFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chargeFileActionPerformed(evt);
+            }
+        });
+
+        btn_cleantxtBox.setMaximumSize(new java.awt.Dimension(73, 40));
+        btn_cleantxtBox.setMinimumSize(new java.awt.Dimension(73, 40));
+        btn_cleantxtBox.setName("btn_cleantxtBox"); // NOI18N
+        btn_cleantxtBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cleantxtBoxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(btn_chargeFile, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_cleantxtBox, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_cleantxtBox, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                    .addComponent(btn_chargeFile, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2));
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 30, 20, 30));
+
+        txtAreaLabel1.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        txtAreaLabel1.setText("File loaded");
+
+        txtAreaLoadFile.setColumns(20);
+        txtAreaLoadFile.setRows(5);
+        jScrollPane1.setViewportView(txtAreaLoadFile);
+
+        txtAreaResultFile.setColumns(20);
+        txtAreaResultFile.setRows(5);
+        jScrollPane2.setViewportView(txtAreaResultFile);
+
+        txtAreaLabel2.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        txtAreaLabel2.setText("Token translator");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtAreaLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtAreaLabel2)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(txtAreaLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(txtAreaLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2))
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 30, 20, 30));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 412, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 377, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel0Layout = new javax.swing.GroupLayout(jPanel0);
         jPanel0.setLayout(jPanel0Layout);
         jPanel0Layout.setHorizontalGroup(
             jPanel0Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel0Layout.setVerticalGroup(
             jPanel0Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(jPanel0Layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         mOption1.setText("File");
+        mOption1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mOption1ActionPerformed(evt);
+            }
+        });
+
+        mOption1_Load.setText("Load file");
+        mOption1_Load.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mOption1_LoadActionPerformed(evt);
+            }
+        });
+        mOption1.add(mOption1_Load);
 
         mOption1_Exit.setText("Exit");
         mOption1_Exit.addActionListener(new java.awt.event.ActionListener() {
@@ -108,6 +294,22 @@ public class Vista extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_mOption1_ExitActionPerformed
 
+    private void btn_chargeFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chargeFileActionPerformed
+        selectFileOption();
+    }//GEN-LAST:event_btn_chargeFileActionPerformed
+
+    private void mOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOption1ActionPerformed
+        
+    }//GEN-LAST:event_mOption1ActionPerformed
+
+    private void mOption1_LoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOption1_LoadActionPerformed
+        selectFileOption();
+    }//GEN-LAST:event_mOption1_LoadActionPerformed
+
+    private void btn_cleantxtBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cleantxtBoxActionPerformed
+        txtAreaLoadFile.setText("");
+    }//GEN-LAST:event_btn_cleantxtBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -138,16 +340,29 @@ public class Vista extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Vista layout = new Vista();                                
+                Vista layout = new Vista();
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton btn_chargeFile;
+    private javax.swing.JButton btn_cleantxtBox;
     private javax.swing.JPanel jPanel0;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenu mOption1;
     private javax.swing.JMenuItem mOption1_Exit;
+    private javax.swing.JMenuItem mOption1_Load;
     private javax.swing.JMenu mOption2;
     private javax.swing.JMenuBar mainMenu;
+    private javax.swing.JLabel txtAreaLabel1;
+    private javax.swing.JLabel txtAreaLabel2;
+    private javax.swing.JTextArea txtAreaLoadFile;
+    private javax.swing.JTextArea txtAreaResultFile;
     // End of variables declaration//GEN-END:variables
 }

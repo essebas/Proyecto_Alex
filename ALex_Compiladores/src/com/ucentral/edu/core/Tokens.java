@@ -58,8 +58,7 @@ public class Tokens {
     public String  proceso(String string){
         Character caracter;
         
-        return "";
-             
+        return "";            
     }
     
     
