@@ -23,14 +23,31 @@ public class ManejadorArchivos {
     public ManejadorArchivos() {
         this.buffer = new byte[90];
     }
-    public void leerFichero(){
+   public void leerFichero(){
         try{
-            fe= new FileInputStream("clientes");
+            fe= new FileInputStream("TablaSimbolos");
             nbytes = fe.read(buffer, 0, 90);
             String str= new String(buffer);
             System.out.println(str);
         }catch(IOException e){
-            
+            System.err.println("Error de archivo :  " + e);
+        }finally{
+            try {
+                if(fs != null)
+                    fs.close();
+            } catch (Exception e) {
+                System.err.println("Error cerrando archivo :" +e);
+            }
+        }
+    }
+    public void leerFichero(String ruta){
+        try{
+            fe= new FileInputStream(ruta);
+            nbytes = fe.read(buffer, 0, 90);
+            String str= new String(buffer);
+            System.out.println(str);
+        }catch(IOException e){
+            System.err.println("Error de archivo :  " + e);
         }finally{
             try {
                 if(fs != null)
