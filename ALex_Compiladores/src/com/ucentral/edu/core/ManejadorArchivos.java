@@ -20,14 +20,17 @@ public class ManejadorArchivos {
     private FileInputStream fe=null;
     private byte[] buffer;
     private int nbytes;
+    private Tokens token;
     public ManejadorArchivos() {
         this.buffer = new byte[90];
+        token = new Tokens();
     }
    public void leerFichero(){
         try{
             fe= new FileInputStream("TablaSimbolos");
             nbytes = fe.read(buffer, 0, 90);
             String str= new String(buffer);
+            token.proceso(str);
             System.out.println(str);
         }catch(IOException e){
             System.err.println("Error de archivo :  " + e);

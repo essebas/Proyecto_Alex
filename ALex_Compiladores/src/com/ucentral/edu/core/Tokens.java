@@ -14,6 +14,10 @@ public class Tokens {
     private Automata automata;
     private String separadores;
     private String operadores;
+    private String ids;
+    private String variables;
+    
+    
     public Tokens() {
         automata = new Automata();
     }
@@ -33,8 +37,30 @@ public class Tokens {
     public void setOperadores(String operadores) {
         this.operadores = operadores;
     }
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
+    public String getVariables() {
+        return variables;
+    }
+
+    public void setVariables(String variables) {
+        this.variables = variables;
+    }
     
     
+    public String  proceso(String string){
+        Character caracter;
+        
+        return "";
+             
+    }
     
     
 }
