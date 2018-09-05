@@ -7,10 +7,17 @@ package com.ucentral.edu.vista;
 
 import com.ucentral.edu.core.FileController;
 import com.ucentral.edu.core.ViewController;
+import com.ucentral.edu.modelo.Lexer;
+import com.ucentral.edu.modelo.Token;
+import static com.ucentral.edu.modelo.Token.*;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -29,7 +36,7 @@ public class Vista extends javax.swing.JFrame {
     private JFileChooser modalFileChooser;
 
     public Vista() {
-        viewController = new ViewController(this);        
+        viewController = new ViewController(this);
         screen = Toolkit.getDefaultToolkit();
         initComponents();
         editComponents();
@@ -52,8 +59,8 @@ public class Vista extends javax.swing.JFrame {
         setTitle("Compilador Lexico");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    
-    public void setIconBotton(JButton botton, String toolTip){
+
+    public void setIconBotton(JButton botton, String toolTip) {
         //System.out.println("Nombre botton" + botton.getName());
         //Image img = screen.getImage("src" + File.separator + "com" + File.separator + "ucentral" + File.separator + "edu" + File.separator + "vista" + File.separator + "drawable" + File.separator + botton.getName() + ".png");
         Image img = screen.getImage(getClass().getClassLoader().getResource(botton.getName() + ".png"));
@@ -63,28 +70,27 @@ public class Vista extends javax.swing.JFrame {
         botton.setToolTipText(toolTip);
     }
 
-    public void editComponents() {                
+    public void editComponents() {
         setIconBotton(btn_chargeFile, "Load file");
-        setIconBotton(btn_cleantxtBox, "Clean text area");        
+        setIconBotton(btn_cleantxtBox, "Clean text area");
         modalFileChooser = new JFileChooser();
         modalFileChooser.setCurrentDirectory(new File("c:" + File.separator + "temp"));
         modalFileChooser.setFileFilter(new FileNameExtensionFilter("txt file", "txt"));
     }
-        
-    
-    public void selectFileOption(){
+
+    public void selectFileOption() {
         int returnValue = 0;
         returnValue = modalFileChooser.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = modalFileChooser.getSelectedFile();
+            //System.out.println("Path" + selectedFile.getPath());
             fileController = new FileController(selectedFile);
-            txtAreaLoadFile.setText(fileController.readFile());                        
+            txtAreaLoadFile.setText(fileController.readFile());
         } else {
             txtAreaLoadFile.setText("Select file...");
         }
     }
 
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -98,6 +104,7 @@ public class Vista extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         btn_chargeFile = new javax.swing.JButton();
         btn_cleantxtBox = new javax.swing.JButton();
+        btn_compile = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         txtAreaLabel1 = new javax.swing.JLabel();
@@ -137,6 +144,15 @@ public class Vista extends javax.swing.JFrame {
             }
         });
 
+        btn_compile.setMaximumSize(new java.awt.Dimension(73, 40));
+        btn_compile.setMinimumSize(new java.awt.Dimension(73, 40));
+        btn_compile.setName("btn_cleantxtBox"); // NOI18N
+        btn_compile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_compileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -146,6 +162,8 @@ public class Vista extends javax.swing.JFrame {
                 .addComponent(btn_chargeFile, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btn_cleantxtBox, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_compile, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -154,7 +172,8 @@ public class Vista extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_cleantxtBox, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(btn_chargeFile, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
+                    .addComponent(btn_chargeFile, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                    .addComponent(btn_compile, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -299,7 +318,7 @@ public class Vista extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_chargeFileActionPerformed
 
     private void mOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOption1ActionPerformed
-        
+
     }//GEN-LAST:event_mOption1ActionPerformed
 
     private void mOption1_LoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOption1_LoadActionPerformed
@@ -309,6 +328,45 @@ public class Vista extends javax.swing.JFrame {
     private void btn_cleantxtBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cleantxtBoxActionPerformed
         txtAreaLoadFile.setText("");
     }//GEN-LAST:event_btn_cleantxtBoxActionPerformed
+
+    private void btn_compileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_compileActionPerformed
+        /*String textoArchivo = txtAreaLoadFile.getText();
+        if (!textoArchivo.equals("") || textoArchivo.equals("Select file...")) {
+            String respuesta = viewController.analizarTexto(fileController.getFile().getPath());            
+            txtAreaResultFile.setText(respuesta);
+        } else {
+
+        }*/
+        try {
+            probarEstaMIerda();
+        } catch (Exception e) {
+            System.out.println("Error" + e.getMessage());
+        }        
+    }//GEN-LAST:event_btn_compileActionPerformed
+
+    public void probarEstaMIerda() throws IOException{
+        Reader reader = new BufferedReader(new FileReader(fileController.getFile()));
+        Lexer lexer = new Lexer(reader);
+        String resultado = "";
+        while (true) {
+            Token token = lexer.yylex();
+            if (token == null) {
+                resultado = resultado + "ECP";
+                txtAreaResultFile.setText(resultado);
+            }
+            switch (token) {
+                case ERROR:
+                    resultado = resultado + "Error, simbolo no reconocido \n";
+                    break;
+                case VARIABLE:
+                case NUMERO:
+                    resultado = resultado + "TOKEN: " + token + " " + lexer.lexeme + "\n";
+                    break;                
+                default:
+                    resultado = resultado + "TOKEN: " + token + "\n";
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -336,6 +394,12 @@ public class Vista extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Vista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        String path = "C:\\Users\\ADMIN02F\\Documents\\Sebas\\Universidad\\Compiladores\\Proyecto_Alex\\ALex_Compiladores\\src\\com\\ucentral\\edu\\modelo\\lexer.flex";
+        //genereteLexer(path);
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -345,9 +409,15 @@ public class Vista extends javax.swing.JFrame {
         });
     }
 
+    public static void genereteLexer(String path) {
+        File file = new File(path);
+        jflex.Main.generate(file);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btn_chargeFile;
     private javax.swing.JButton btn_cleantxtBox;
+    private javax.swing.JButton btn_compile;
     private javax.swing.JPanel jPanel0;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

@@ -5,10 +5,15 @@
  */
 package com.ucentral.edu.core;
 
+//import com.ucentral.edu.modelo.Lexer;
+import com.ucentral.edu.modelo.Token;
 import com.ucentral.edu.vista.Vista;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.Reader;
+
 
 /**
  *
@@ -20,6 +25,35 @@ public class ViewController implements ActionListener{
 
     public ViewController(Vista v) {
         currentControlview = v;
+    }
+    
+    public String analizarTexto(String textoArchivo){
+        /*try {
+            Reader reader = new BufferedReader(new FileReader(textoArchivo));   
+            Lexer lexer = new Lexer(reader);
+            String txtExit = "";
+            while(true){
+                Token token = lexer.yylex();
+                if(token == null){
+                    txtExit = txtExit + "--- End Analizis ---";
+                    return txtExit;
+                }
+                switch(token){
+                    case ERROR:                        
+                        txtExit = txtExit + "Error, no se reconoce el simbolo";
+                        break;
+                    case ID: case INT: case WORD:
+                        txtExit = txtExit + "TOKEN: " + token + " " + lexer.lexeme + "\n";
+                        break;
+                    default:
+                        txtExit=txtExit+ "TOKEN: " + token + "\n";
+                }                
+            }            
+        } catch (Exception e) {
+            System.out.println("Error" + e.getMessage());
+            return "";
+        }        */                   
+        return "";
     }
     
     @Override
